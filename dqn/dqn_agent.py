@@ -1,5 +1,6 @@
 # -*- coding: utf-8
 
+
 import numpy as np
 import random
 from collections import namedtuple, deque
@@ -88,6 +89,41 @@ class Agent():
 
         ## TODO: compute and minimize the loss
 
+        # Formula is:
+        # L(theta_i) = ExpectedValue_(s,a,r,s') [ (r + gamma * max_a' Q(s',a')) - Q(s,a) ]
+
+        # First let's calculate max_a' Q(s',a')
+        # next_states is s'
+        # detatch tensor from computational graph.
+        # Find max value for Q(s',:)
+        # unsqueeze so it has appropriate shape.
+        q_next_state = self.qnetwork_target(next_states).detach().max(1)[0].unsqueeze(1)
+
+        # Okay now let's do the first half of the formula
+        # When the rollout is complete, then 1 - dones means q_target is just r
+        # which makes sense because there's no next state if rollout is done.
+        q_target = rewards + gamma * q_next_state * (1 - dones)
+
+        # This is just the value of Q(s,a) where s is contained in states
+        # and a is contained in actions.
+
+        # REMEMBER!!! THERE'S NO SOFTMAX AT THE END OF qnetwork_*. It's not a
+        # categorical classifier but a state-action value function approximator!
+        q_current = self.qnetwork_local(states).gather(1, actions)
+
+        # All the squares and summations are inside mse_loss
+        # The expected value is just an average because we use replay buffer to
+        # ensure the samples are i.i.d.
+        loss = F.mse_loss(q_current, q_target)
+
+        # Zero out the gradient buffers of the optimizer
+        self.optimizer.zero_grad()
+
+        # Compute the gradient of loss wrt qnetwork_local.parameters()
+        loss.backward()
+
+        # This updates the qnetwork_local.parameters()
+        self.optimizer.step()
 
         # ------------------- update target network ------------------- #
         self.soft_update(self.qnetwork_local, self.qnetwork_target, TAU)

@@ -7,7 +7,7 @@ import torch.nn.functional as F
 class QNetwork(nn.Module):
     """Actor (Policy) Model."""
 
-    def __init__(self, state_size, action_size, seed):
+    def __init__(self, state_size, action_size, seed, fc1_size=48, fc2_size=32):
         """Initialize parameters and build model.
         Params
         ======
@@ -27,12 +27,15 @@ class QNetwork(nn.Module):
         self.state_size = state_size
         self.action_size = action_size
 
-        self.fc1 = nn.Linear(self.state_size, 6)
-        self.fc2 = nn.Linear(6, 6)
-        self.fc3 = nn.Linear(6, self.action_size)
+        self.fc1 = nn.Linear(self.state_size, fc1_size)
+        self.fc2 = nn.Linear(fc1_size, fc2_size)
+        self.fc3 = nn.Linear(fc2_size, self.action_size)
 
     def forward(self, state):
         """Build a network that maps state -> action values."""
-        x = F.relu(self.fc1(state))
-        x = F.relu(self.fc2(x))
-        return F.relu(self.fc3(x))
+        x = F.tanh(self.fc1(state))
+        x = F.tanh(self.fc2(x))
+        # We don't want to put a scaling nonlinearity on the output layer because
+        # our network is acting as a function approximator for a state-action
+        # value function that can be well above or below zero.
+        return self.fc3(x)
