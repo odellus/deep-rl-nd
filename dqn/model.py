@@ -7,7 +7,7 @@ import torch.nn.functional as F
 class QNetwork(nn.Module):
     """Actor (Policy) Model."""
 
-    def __init__(self, state_size, action_size, seed, fc1_size=48, fc2_size=32):
+    def __init__(self, state_size, action_size, seed, fc1_size=100, fc2_size=100):
         """Initialize parameters and build model.
         Params
         ======
@@ -39,3 +39,9 @@ class QNetwork(nn.Module):
         # our network is acting as a function approximator for a state-action
         # value function that can be well above or below zero.
         return self.fc3(x)
+
+class DuelingQNetwork(nn.Module):
+    def __init__(self, state_size, action_size, seed, fc1_size=64, fc2_size=64):
+        super(DuelingQNetwork, self).__init__()
+        self.seed = torch.manual_seed(seed)
+        self.state_size= state_size        
