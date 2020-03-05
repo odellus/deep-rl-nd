@@ -1,0 +1,34 @@
+# Filename: config.yaml
+# Description: Contains configuration variables for navigation project
+# Author: Thomas Wood (odell.wood@gmail.com)
+
+# Parameters for the Unity Environment
+Environment:
+  # location of executable
+  Filepath: /data/Banana_Linux_NoVis/Banana.x86_64
+  Success: 13.0          # score success cutoff
+
+# Parameters for the DQN Agent
+Agent:
+  Buffer_size: 100000    # replay buffer size
+  Batch_size: 64         # minibatch size
+  Gamma: 0.99            # discount factor
+  Tau: 0.001              # for soft update of target parameters
+  Lr: 0.0005               # learning rate
+  Update_every: 4        # how often to update the network
+  Brain_index: 0         # index of agent in environment
+
+# Hyperparameters used during optimization
+Training:
+  Number_episodes: 2000  # Number of episodes
+  Max_timesteps: 1000    # Maximum number of timesteps per episode
+  Eps_start: 1.0         # Starting epsilon value for e-Greedy agent
+  Eps_end:               # Minimum value for e-Greedy agent
+  Eps_decay:  0.995      # How much epsilon decays during each episode
+  Train_mode: True
+  Score_window: 100
+
+# Hyperparameters used to define the network architecture
+Model:
+  fc1_size: 100          # Dimensionality of first fully connected layer
+  fc2_size: 100          # Dimensionality of second fully connected layer
