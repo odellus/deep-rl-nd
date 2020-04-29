@@ -1,0 +1,9 @@
+[submodule "projects/reacher"]
+	path = projects/reacher
+	url = https://github.com/odellus/reacher
+[submodule "projects/navigation"]
+	path = projects/navigation
+	url = https://github.com/odellus/navigation
+[submodule "projects/tennis"]
+	path = projects/tennis
+	url = https://github.com/odellus/tennis
